@@ -23,9 +23,12 @@ export const useHomeStyles = makeStyles((theme: Theme) => ({
   rightSideWrapper: {
     padding: 20,
     borderLeft: '1px solid grey',
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'space-evenly'
+    '& div': {
+      height: '100%',
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'space-around'
+    }
   },
 
   formControl: {

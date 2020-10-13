@@ -1,6 +1,11 @@
 import React from 'react';
-import {useCalculator} from '../contexts/calculatorContext';
+import '../index.css'
+import {useReactToPrint} from 'react-to-print';
+
 import {Typography} from '@material-ui/core';
+import Button from '@material-ui/core/Button';
+
+import {useCalculator} from '../contexts/calculatorContext';
 import {CalculatorContext, DepositsItem} from '../interfaces';
 import {useHomeStyles} from '../pages/Home';
 
@@ -12,11 +17,15 @@ interface CalculatorRightSideProps {
 interface ListOfDeposits {
   [key: string]: string
 }
-
 const CalculatorRightSide: React.FC<CalculatorRightSideProps> = ({
   classes,
   deposits,
 }: CalculatorRightSideProps): React.ReactElement => {
+  const refToPrint = React.useRef<HTMLDivElement>() as React.MutableRefObject<HTMLDivElement>
+
+  const handlePrint = useReactToPrint({
+    content: () => refToPrint.current
+  });
   const context: CalculatorContext = useCalculator();
   const [currentDepositName, setCurrentDepositName] = React.useState<ListOfDeposits>(
       {});
@@ -28,7 +37,7 @@ const CalculatorRightSide: React.FC<CalculatorRightSideProps> = ({
     setCurrentDepositName(name);
   }, [context.settingsState.code, deposits]);
   return (
-      <>
+      <div ref={refToPrint} className="printOnCenter">
         <Typography component="h2"
                     variant="h5"
                     children={`Тип депозита: ${currentDepositName[context.settingsState.code] ||
@@ -68,10 +77,18 @@ const CalculatorRightSide: React.FC<CalculatorRightSideProps> = ({
                             className={classes.displayResult}
 
                 />
+                <div className="no-print">
+                <Button variant="contained"
+                        color="primary"
+                        children="Напечатать"
+
+                        onClick={handlePrint}
+                />
+                </div>
               </> : null
         }
 
-      </>
+      </div>
   );
 };
 
