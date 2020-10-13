@@ -10,24 +10,25 @@ const CalculatorProvider: React.FC = ({children}): React.ReactElement => {
   const [settingsState, setSettingsState] = useForm(
       {code: '', period_from: '', summ_from: ''});
   const [rate, setRate] = React.useState<number>(0);
+  const [income, setIncome] = React.useState<number>(0);
 
-  const calcRateAndIncome = (params: DepositParams[]) => {
-    const periodValues = params.map((param: DepositParams) => param.period_from);
-    const currentPeriodRange = periodValues.findIndex(
-        (period: number) => period > +settingsState.period_from
-    );
-    const index = currentPeriodRange === -1 ? params.length - 1 : currentPeriodRange - 1;
+  const calcRateAndIncome = (params: DepositParams[], currentPeriodRange: number) => {
+    const index = currentPeriodRange === -1
+        ? params.length - 1
+        : currentPeriodRange - 1;
+
     const offers = params[index].summs_and_rate;
-    const offersValues = offers.map((obj: SummsAndRate) => obj.summ_from);
-    const currentValuesRange = offersValues.findIndex(
-        (summ: number) => summ > +settingsState.summ_from
+    const currentValuesRange = offers.findIndex(
+        (param: SummsAndRate) => param.summ_from > +settingsState.summ_from,
     );
-    console.log(index, offers, offersValues);
-    if (currentValuesRange === -1) {
-      setRate(offers[offers.length - 1].rate);
-      return;
-    }
-    setRate(offers[currentValuesRange - 1].rate);
+
+    const currentRate = currentValuesRange === -1
+        ? offers[offers.length - 1].rate
+        : offers[currentValuesRange - 1].rate;
+    setRate(currentRate);
+
+    const currentIncome = +settingsState.summ_from * currentRate * +settingsState.period_from
+    setIncome(currentIncome)
   };
 
   return (
@@ -36,6 +37,7 @@ const CalculatorProvider: React.FC = ({children}): React.ReactElement => {
         setSettingsState,
         calcRateAndIncome,
         rate,
+        income
       }}>
         {children}
       </CalculatorContext.Provider>

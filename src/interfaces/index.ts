@@ -29,5 +29,5 @@ export interface CreditSettingsState {
 export interface CalculatorContext {
   settingsState: CreditSettingsState;
   setSettingsState: (e?: React.ChangeEvent<{ name?: string | undefined; value: unknown; } | HTMLInputElement>) => void;
-  calcRateAndIncome: (params: DepositParams[]) => void;
+  calcRateAndIncome: (params: DepositParams[], currentPeriodRange: number) => void;
 }

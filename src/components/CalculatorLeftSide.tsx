@@ -11,6 +11,7 @@ import TextField from '@material-ui/core/TextField';
 import {CalculatorContext, Credit, DepositParams} from '../interfaces';
 import {useHomeStyles} from '../pages/Home';
 import {useCalculator} from '../contexts/calculatorContext';
+import findMin from '../utils/findMin';
 
 interface CalculatorLeftSideProps {
   deposits: Credit[];
@@ -24,6 +25,12 @@ const CalculatorLeftSide: React.FC<CalculatorLeftSideProps> = ({
   const context: CalculatorContext = useCalculator();
 
   const [depositParams, setDepositParams] = React.useState<DepositParams[]>([]);
+  const [indexOfMin, setIndexOfMin] = React.useState<number>(0)
+
+  useEffect(() => {
+    setIndexOfMin(findMin(context.settingsState.period_from, depositParams))
+  }, [context.settingsState.period_from, depositParams])
+
   useEffect(() => {
     const index = deposits.findIndex(
         value => context.settingsState.code === value.code);
@@ -64,8 +71,15 @@ const CalculatorLeftSide: React.FC<CalculatorLeftSideProps> = ({
                          value={context.settingsState.period_from}
                          name="period_from"
                          type="number"
+                         error={!(depositParams[0]?.period_from <=
+                             +context.settingsState.period_from)}
+                         helperText={!(depositParams[0]?.period_from <=
+                             +context.settingsState.period_from)
+                             ? `Минимальный период ${depositParams[0]?.period_from} день/дней`
+                             : null
+                         }
                          onChange={context.setSettingsState}
-                         />
+              />
             </> : null
         }
         {
@@ -78,6 +92,13 @@ const CalculatorLeftSide: React.FC<CalculatorLeftSideProps> = ({
                            value={context.settingsState.summ_from}
                            name="summ_from"
                            type="number"
+                           error={!(depositParams[indexOfMin]?.summs_and_rate[0]?.summ_from <=
+                               +context.settingsState.summ_from)}
+                           helperText={
+                             !(depositParams[indexOfMin]?.summs_and_rate[0]?.summ_from <=
+                                 +context.settingsState.summ_from)
+                                 ? `Минимальная сумма ${depositParams[indexOfMin]?.summs_and_rate[0]?.summ_from}`
+                                 : null}
                            onChange={context.setSettingsState}
                 />
               </>
@@ -93,7 +114,7 @@ const CalculatorLeftSide: React.FC<CalculatorLeftSideProps> = ({
               <Button variant="contained"
                       color="primary"
                       children="Подобрать"
-                      onClick={() => context.calcRateAndIncome(depositParams)}
+                      onClick={() => context.calcRateAndIncome(depositParams, indexOfMin)}
               />
             </div>
         }
