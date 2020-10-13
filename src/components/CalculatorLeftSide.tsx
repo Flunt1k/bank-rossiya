@@ -55,48 +55,38 @@ const CalculatorLeftSide: React.FC<CalculatorLeftSideProps> = ({
                           key={v4()}>{credit.name}</MenuItem>)}*
           </Select>
         </FormControl>
-        <Typography component="h6" variant="subtitle2">Выберите
-          период:</Typography>
-        <FormControl variant="outlined" className={classes.formControl}>
-          <InputLabel id="creditType_label">Период</InputLabel>
-          <Select
-              labelId="creditType_label"
-              id="demo-simple-select-outlined"
-              value={context.settingsState.period_from}
-              onChange={context.setSettingsState}
-              name="period_from"
-              label="Период"
-          >
-            <MenuItem value="">
-              <em>
-                {!depositParams?.length ? 'Выберите тип дипозита' : 'Выберите' +
-                    ' период'}
-              </em>
-            </MenuItem>
-            {
-              depositParams.map((params: DepositParams) => {
-                return <MenuItem key={v4()}
-                                 value={`${params.period_from}`}>{params.period_from}</MenuItem>;
-              })}
-          </Select>
-        </FormControl>
-        <Typography component="h6" variant="subtitle2">Введите
-          сумму:</Typography>
-        <TextField variant="outlined" className={classes.formControl}
-                   label={!(!!context.settingsState.period_from)
-                       ? 'Сперва выберите' +
-                       ' период'
-                       : 'Введите сумму'}
-                   disabled={!(!!context.settingsState.period_from)}
-                   value={context.settingsState.summ_from}
-                   name="summ_from"
-                   onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                     context.setSettingsState(e);
-                   }}
-        />
-        {!(depositParams[0]?.summs_and_rate[0]?.summ_from <= +context.settingsState.summ_from)
+
+        {context.settingsState.code ?
+            <>
+              <Typography component="h6" variant="subtitle2">Введите
+                период: (дней)</Typography>
+              <TextField variant="outlined" className={classes.formControl}
+                         value={context.settingsState.period_from}
+                         name="period_from"
+                         type="number"
+                         onChange={context.setSettingsState}
+                         />
+            </> : null
+        }
+        {
+          !(depositParams[0]?.period_from <= +context.settingsState.period_from)
+              ? null
+              : <>
+                <Typography component="h6" variant="subtitle2">Введите
+                  сумму:</Typography>
+                <TextField variant="outlined" className={classes.formControl}
+                           value={context.settingsState.summ_from}
+                           name="summ_from"
+                           type="number"
+                           onChange={context.setSettingsState}
+                />
+              </>
+        }
+
+        {!(depositParams[0]?.summs_and_rate[0]?.summ_from <=
+            +context.settingsState.summ_from)
             ?
-            <div>Сумма не подходит для выбранных условий</div>
+            null
             :
 
             <div>
