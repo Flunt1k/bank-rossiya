@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React from 'react';
 import {v4} from 'uuid';
 
 import FormControl from '@material-ui/core/FormControl';
@@ -8,13 +8,13 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
 
-import {CalculatorContext, Credit, DepositParams} from '../interfaces';
+import {CalculatorContext, DepositsItem, DepositParams} from '../interfaces';
 import {useHomeStyles} from '../pages/Home';
 import {useCalculator} from '../contexts/calculatorContext';
 import findMin from '../utils/findMin';
 
 interface CalculatorLeftSideProps {
-  deposits: Credit[];
+  deposits: DepositsItem[];
   classes: ReturnType<typeof useHomeStyles>
 }
 
@@ -25,13 +25,13 @@ const CalculatorLeftSide: React.FC<CalculatorLeftSideProps> = ({
   const context: CalculatorContext = useCalculator();
 
   const [depositParams, setDepositParams] = React.useState<DepositParams[]>([]);
-  const [indexOfMin, setIndexOfMin] = React.useState<number>(0)
+  const [indexOfMin, setIndexOfMin] = React.useState<number>(0);
 
-  useEffect(() => {
-    setIndexOfMin(findMin(context.settingsState.period_from, depositParams))
-  }, [context.settingsState.period_from, depositParams])
+  React.useEffect(() => {
+    setIndexOfMin(findMin(context.settingsState.period_from, depositParams));
+  }, [context.settingsState.period_from, depositParams]);
 
-  useEffect(() => {
+  React.useEffect(() => {
     const index = deposits.findIndex(
         value => context.settingsState.code === value.code);
     if (index !== -1) {
@@ -57,7 +57,7 @@ const CalculatorLeftSide: React.FC<CalculatorLeftSideProps> = ({
             <MenuItem value="">
               <em>Тип кредита</em>
             </MenuItem>
-            {deposits?.map((credit: Credit) =>
+            {deposits?.map((credit: DepositsItem) =>
                 <MenuItem value={credit.code}
                           key={v4()}>{credit.name}</MenuItem>)}*
           </Select>
@@ -78,7 +78,13 @@ const CalculatorLeftSide: React.FC<CalculatorLeftSideProps> = ({
                              ? `Минимальный период ${depositParams[0]?.period_from} день/дней`
                              : null
                          }
-                         onChange={context.setSettingsState}
+                         onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                           context.setSettingsState(e);
+                           if (context.rate !== 0 && context.income !== 0) {
+                             context.setIncome(0);
+                             context.setRate(0);
+                           }
+                         }}
               />
             </> : null
         }
@@ -92,19 +98,28 @@ const CalculatorLeftSide: React.FC<CalculatorLeftSideProps> = ({
                            value={context.settingsState.summ_from}
                            name="summ_from"
                            type="number"
-                           error={!(depositParams[indexOfMin]?.summs_and_rate[0]?.summ_from <=
+                           error={!(depositParams[indexOfMin -
+                               1]?.summs_and_rate[0]?.summ_from <=
                                +context.settingsState.summ_from)}
                            helperText={
-                             !(depositParams[indexOfMin]?.summs_and_rate[0]?.summ_from <=
+                             !(depositParams[indexOfMin -
+                                 1]?.summs_and_rate[0]?.summ_from <=
                                  +context.settingsState.summ_from)
-                                 ? `Минимальная сумма ${depositParams[indexOfMin]?.summs_and_rate[0]?.summ_from}`
+                                 ? `Минимальная сумма ${depositParams[indexOfMin -
+                                 1]?.summs_and_rate[0]?.summ_from}`
                                  : null}
-                           onChange={context.setSettingsState}
+                           onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                             context.setSettingsState(e);
+                             if (context.rate !== 0 && context.income !== 0) {
+                               context.setIncome(0);
+                               context.setRate(0);
+                             }
+                           }}
                 />
               </>
         }
 
-        {!(depositParams[0]?.summs_and_rate[0]?.summ_from <=
+        {!(depositParams[indexOfMin - 1]?.summs_and_rate[0]?.summ_from <=
             +context.settingsState.summ_from)
             ?
             null
@@ -114,7 +129,8 @@ const CalculatorLeftSide: React.FC<CalculatorLeftSideProps> = ({
               <Button variant="contained"
                       color="primary"
                       children="Подобрать"
-                      onClick={() => context.calcRateAndIncome(depositParams, indexOfMin)}
+                      onClick={() => context.calcRateAndIncome(depositParams,
+                          indexOfMin)}
               />
             </div>
         }

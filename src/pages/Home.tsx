@@ -5,7 +5,7 @@ import makeStyles from '@material-ui/core/styles/makeStyles';
 import {Theme} from '@material-ui/core';
 
 import Calculator from '../components/Calculator';
-import {DepositsList} from '../interfaces';
+import {Deposits} from '../interfaces';
 import CalculatorProvider from '../contexts/calculatorContext';
 
 export const useHomeStyles = makeStyles((theme: Theme) => ({
@@ -16,25 +16,37 @@ export const useHomeStyles = makeStyles((theme: Theme) => ({
 
   leftSideWrapper: {
     height: '100%',
-    width: '60%',
-    borderRight: '1px solid grey',
+    width: '40%',
     padding: 20
   },
 
   rightSideWrapper: {
-    height: '100%',
-    padding: 20
+    padding: 20,
+    borderLeft: '1px solid grey',
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'space-evenly'
   },
 
   formControl: {
     minWidth: 120,
-    width: '70%',
+    width: '100%',
     margin: '15px 0',
   },
+  display: {
+    fontSize: 22,
+    fontWeight: 600,
+  },
+
+  displayResult: {
+    margin: '35px 0',
+    fontSize: 24,
+    fontWeight: 600
+  }
 }))
 
 interface HomeProps {
-  credits: DepositsList
+  credits: Deposits
 }
 
 const Home: React.FC<HomeProps> = ({credits}: HomeProps): React.ReactElement => {

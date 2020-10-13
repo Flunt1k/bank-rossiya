@@ -1,7 +1,9 @@
 import {DepositParams} from '../interfaces';
 
 const findMin = (period: string, depositParams: DepositParams[]) => {
-  return depositParams.findIndex(value => value.period_from === +period)
+  return depositParams.findIndex(
+      (param: DepositParams) => param.period_from > +period,
+  );
 }
 
 export default findMin
