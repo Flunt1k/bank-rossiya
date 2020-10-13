@@ -19,15 +19,15 @@ const CalculatorProvider: React.FC = ({children}): React.ReactElement => {
     const index = currentPeriodRange === -1 ? params.length - 1 : currentPeriodRange - 1;
     const offers = params[index].summs_and_rate;
     const offersValues = offers.map((obj: SummsAndRate) => obj.summ_from);
-    const indexRange = offersValues.findIndex(
+    const currentValuesRange = offersValues.findIndex(
         (summ: number) => summ > +settingsState.summ_from
     );
     console.log(index, offers, offersValues);
-    if (indexRange === -1) {
+    if (currentValuesRange === -1) {
       setRate(offers[offers.length - 1].rate);
       return;
     }
-    setRate(offers[indexRange - 1].rate);
+    setRate(offers[currentValuesRange - 1].rate);
   };
 
   return (
