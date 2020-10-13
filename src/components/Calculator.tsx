@@ -16,7 +16,7 @@ const Calculator: React.FC<CalculatorProps> = ({credits, classes}: CalculatorPro
       <>
         <Paper className={classes.calculatorForm}>
           <div className={classes.leftSideWrapper}>
-            <CalculatorLeftSide deposits={credits?.deposits}/>
+            <CalculatorLeftSide deposits={credits?.deposits} classes={classes}/>
           </div>
           <div className={classes.rightSideWrapper}>
             display

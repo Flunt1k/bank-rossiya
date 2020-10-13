@@ -1,3 +1,5 @@
+import React from 'react';
+
 export interface DepositsList {
   deposits: Credit[]
 }
@@ -16,4 +18,15 @@ export interface CreditParams {
 export interface SummsAndRate {
   summ_from: number;
   rate: number
+}
+
+export interface CreditSettingsState {
+  code: string;
+  period_from: string;
+  summ_from: string
+}
+
+export interface CalculatorContext {
+  settingsState: CreditSettingsState
+  setSettingsState: (e?: React.ChangeEvent<{ name?: string | undefined; value: unknown; } | HTMLInputElement>) => void
 }

@@ -2,11 +2,13 @@ import React from 'react';
 
 import Container from '@material-ui/core/Container';
 import makeStyles from '@material-ui/core/styles/makeStyles';
+import {Theme} from '@material-ui/core';
 
 import Calculator from '../components/Calculator';
 import {DepositsList} from '../interfaces';
+import CalculatorProvider from '../contexts/calculatorContext';
 
-export const useHomeStyles = makeStyles(() => ({
+export const useHomeStyles = makeStyles((theme: Theme) => ({
   calculatorForm: {
     display: 'flex',
     marginTop: 20,
@@ -15,12 +17,20 @@ export const useHomeStyles = makeStyles(() => ({
   leftSideWrapper: {
     height: '100%',
     width: '60%',
-    borderRight: '1px solid grey'
+    borderRight: '1px solid grey',
+    padding: 20
   },
 
   rightSideWrapper: {
-    height: '100%'
-  }
+    height: '100%',
+    padding: 20
+  },
+
+  formControl: {
+    minWidth: 120,
+    width: '70%',
+    margin: '15px 0',
+  },
 }))
 
 interface HomeProps {
@@ -33,7 +43,9 @@ const Home: React.FC<HomeProps> = ({credits}: HomeProps): React.ReactElement => 
   return (
       <>
         <Container>
-          <Calculator credits={credits} classes={classes}/>
+          <CalculatorProvider>
+            <Calculator credits={credits} classes={classes}/>
+          </CalculatorProvider>
         </Container>
       </>
   );
