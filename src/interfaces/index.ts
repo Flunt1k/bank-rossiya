@@ -7,10 +7,10 @@ export interface DepositsList {
 export interface Credit {
   code: string;
   name: string;
-  param: CreditParams[]
+  param: DepositParams[]
 }
 
-export interface CreditParams {
+export interface DepositParams {
   period_from: number;
   summs_and_rate: SummsAndRate[]
 }
@@ -27,6 +27,7 @@ export interface CreditSettingsState {
 }
 
 export interface CalculatorContext {
-  settingsState: CreditSettingsState
-  setSettingsState: (e?: React.ChangeEvent<{ name?: string | undefined; value: unknown; } | HTMLInputElement>) => void
+  settingsState: CreditSettingsState;
+  setSettingsState: (e?: React.ChangeEvent<{ name?: string | undefined; value: unknown; } | HTMLInputElement>) => void;
+  calcRateAndIncome: (params: DepositParams[]) => void;
 }

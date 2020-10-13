@@ -14,7 +14,7 @@ interface CalculatorProps {
 const Calculator: React.FC<CalculatorProps> = ({credits, classes}: CalculatorProps): React.ReactElement => {
   return (
       <>
-        <Paper className={classes.calculatorForm}>
+        <Paper className={classes.calculatorForm} elevation={3}>
           <div className={classes.leftSideWrapper}>
             <CalculatorLeftSide deposits={credits?.deposits} classes={classes}/>
           </div>

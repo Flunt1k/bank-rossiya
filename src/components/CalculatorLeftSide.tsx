@@ -3,12 +3,12 @@ import {v4} from 'uuid';
 
 import FormControl from '@material-ui/core/FormControl';
 import InputLabel from '@material-ui/core/InputLabel';
-import {Select} from '@material-ui/core';
+import {Button, Select} from '@material-ui/core';
 import MenuItem from '@material-ui/core/MenuItem';
 import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
 
-import {CalculatorContext, Credit, CreditParams} from '../interfaces';
+import {CalculatorContext, Credit, DepositParams} from '../interfaces';
 import {useHomeStyles} from '../pages/Home';
 import {useCalculator} from '../contexts/calculatorContext';
 
@@ -21,23 +21,22 @@ const CalculatorLeftSide: React.FC<CalculatorLeftSideProps> = ({
   deposits,
   classes,
 }: CalculatorLeftSideProps): React.ReactElement => {
-  const context: CalculatorContext = useCalculator()
+  const context: CalculatorContext = useCalculator();
 
-  const [depositParams, setDepositParams] = React.useState<CreditParams[] | undefined>();
-
+  const [depositParams, setDepositParams] = React.useState<DepositParams[]>([]);
   useEffect(() => {
-    const index = deposits.findIndex(value => context.settingsState.code === value.code);
+    const index = deposits.findIndex(
+        value => context.settingsState.code === value.code);
     if (index !== -1) {
       const params = deposits[index].param;
       setDepositParams(params);
-    } else {
-      setDepositParams(undefined);
     }
   }, [context.settingsState.code, deposits]);
 
   return (
       <>
-        <Typography component="h6" variant="subtitle2">Выберите тип депозита:</Typography>
+        <Typography component="h6" variant="subtitle2">Выберите тип
+          депозита:</Typography>
         <FormControl variant="outlined" className={classes.formControl}>
           <InputLabel id="creditType_label">Тип</InputLabel>
           <Select
@@ -56,7 +55,8 @@ const CalculatorLeftSide: React.FC<CalculatorLeftSideProps> = ({
                           key={v4()}>{credit.name}</MenuItem>)}*
           </Select>
         </FormControl>
-        <Typography component="h6" variant="subtitle2">Выберите период:</Typography>
+        <Typography component="h6" variant="subtitle2">Выберите
+          период:</Typography>
         <FormControl variant="outlined" className={classes.formControl}>
           <InputLabel id="creditType_label">Период</InputLabel>
           <Select
@@ -74,20 +74,39 @@ const CalculatorLeftSide: React.FC<CalculatorLeftSideProps> = ({
               </em>
             </MenuItem>
             {
-            depositParams?.map((params: CreditParams) => {
-              return <MenuItem key={v4()}
-                               value={`${params.period_from}`}>{params.period_from}</MenuItem>;
-            })}
+              depositParams.map((params: DepositParams) => {
+                return <MenuItem key={v4()}
+                                 value={`${params.period_from}`}>{params.period_from}</MenuItem>;
+              })}
           </Select>
         </FormControl>
-        <Typography component="h6" variant="subtitle2">Введите сумму:</Typography>
+        <Typography component="h6" variant="subtitle2">Введите
+          сумму:</Typography>
         <TextField variant="outlined" className={classes.formControl}
-                   label={!(!!context.settingsState.period_from) ? 'Сперва выберите' +
-                       ' период' : 'Введите сумму'}
+                   label={!(!!context.settingsState.period_from)
+                       ? 'Сперва выберите' +
+                       ' период'
+                       : 'Введите сумму'}
                    disabled={!(!!context.settingsState.period_from)}
                    value={context.settingsState.summ_from}
-                   onChange={context.setSettingsState}
+                   name="summ_from"
+                   onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                     context.setSettingsState(e);
+                   }}
         />
+        {!(depositParams[0]?.summs_and_rate[0]?.summ_from <= +context.settingsState.summ_from)
+            ?
+            <div>Сумма не подходит для выбранных условий</div>
+            :
+
+            <div>
+              <Button variant="contained"
+                      color="primary"
+                      children="Подобрать"
+                      onClick={() => context.calcRateAndIncome(depositParams)}
+              />
+            </div>
+        }
       </>
   );
 };
